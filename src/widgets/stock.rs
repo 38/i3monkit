@@ -112,7 +112,6 @@ impl <'a> StockClient<'a> {
                         if let Some(price) = Self::query_latest(symbol, &api_key) {
                             data.insert(symbol.to_string(), price);
                             *next_update = SystemTime::now() + Duration::new(60,0); 
-                            eprintln!("Updated {}", symbol);
                         }
                     }
 

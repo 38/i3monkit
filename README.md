@@ -1,6 +1,6 @@
 # i3monkit - The i3 Status Bar Monitor Toolkit
 
-This is a toolkit for building customized i3 status bar for the [i3 tiling window manager](https://i3wm.org).
+This is a toolkit for building customized status bar program for the [i3 tiling window manager](https://i3wm.org).
 i3 has its default status bar program called `i3status`, but it's somehow limited and hard to
 extend and customize. This crate gives you the ability to reimplement an status bar program for
 i3 quickly.
@@ -16,7 +16,7 @@ First, you need to crate a crate and import this crate
 
 ```toml
 [dependencies]
-i3mokit = "*"
+i3monkit = "*"
 
 ```
 

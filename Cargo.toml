@@ -5,6 +5,8 @@ authors = ["Hao Hou <haohou302@gmail.com>"]
 edition = "2018"
 license = "MIT"
 description = "The toolkit to build cutomized i3status alternative"
+readme = "README.md"
+repository = "https://github.com/38/i3monkit"
 
 
 [dependencies]

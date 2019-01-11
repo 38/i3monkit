@@ -56,7 +56,26 @@
 //! }
 //! ```
 //!
-
+//! Finally, you can change `~/.config/i3/config` to make i3wm uses your status bar program
+//!
+//! ``` config
+//!  # Start i3bar to display a workspace bar (plus the system information i3status
+//!  # finds out, if available)
+//!  bar {
+//!  	status_command path/to/your/customized/status/program
+//!  	tray_output primary
+//!  	colors {
+//!  	   background #222222
+//!  	   statusline #00ee22
+//!  	   separator #666666
+//!  	   #                  border  backgr. text
+//!  	   focused_workspace  #4c7899 #285577 #ffffff
+//!  	   inactive_workspace #333333 #222222 #888888
+//!  	   urgent_workspace   #2f343a #900000 #ffffff
+//!  	}                                                           
+//!   }
+//! ```
+//!
 mod protocol;
 mod widget;
 pub mod widgets;

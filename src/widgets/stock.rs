@@ -59,6 +59,7 @@ struct Response {
 
 #[derive(Debug)]
 struct StockPrice {
+    previous_close:f32,
     open : f32,
     high : f32,
     low  : f32,
@@ -79,15 +80,18 @@ impl <'a> Widget for StockWidget<'a> {
         block.use_pango();
         block.append_full_text(&format!("<span foreground=\"#eaeaea\">{}</span>", self.symbol));
         if let Some(latest) = self.client.borrow().cache.get(&self.symbol.to_string()) {
-            let color = if latest.open > latest.close {
+            let color = if latest.previous_close > latest.close {
                 "#ff0000"
-            } else if latest.open < latest.close {
+            } else if latest.previous_close < latest.close {
                 "#00ff00"
             } else {
                 "#ffffff"
             };
 
-            block.append_full_text(&format!("<span foreground=\"{color}\">{value:.2}</span>", color = color, value = latest.close));
+            block.append_full_text(&format!("<span foreground=\"{color}\">{value:.2}({percent:.1}%)</span>", 
+                                            color = color, 
+                                            value = latest.close,
+                                            percent = 100.0 * (latest.close - latest.previous_close).abs() /  latest.previous_close ));
         } else {
             block.append_full_text("<span foreground=\"#777777\">waiting</span>");
         }
@@ -192,13 +196,24 @@ impl <'a> StockClient<'a> {
             if let Ok(response) = serde_json::from_str::<Response>(&body) {
                 if let Some(latest_date) = response.time_series.keys().max() {
                     let latest = &response.time_series[latest_date];
+                    let yesterday = response.time_series.keys().filter(|d| d != &latest_date).max();
+                        
+                    let open = f32::from_str(&latest.open).unwrap();
+
+                    let pc = if let Some(yesterday) = yesterday {
+                        let yesterday = &response.time_series[yesterday];
+                        f32::from_str(&yesterday.close).unwrap_or(0.0)
+                    } else {
+                        open
+                    };
 
                     return Some(StockPrice {
-                        open: f32::from_str(&latest.open).unwrap(),
-                        high: f32::from_str(&latest.high).unwrap(),
-                        low: f32::from_str(&latest.low).unwrap(),
-                        close: f32::from_str(&latest.close).unwrap(),
-                        volume: f32::from_str(&latest.volume).unwrap(),
+                        previous_close: pc,
+                        open ,
+                        high: f32::from_str(&latest.high).unwrap_or(0.0),
+                        low: f32::from_str(&latest.low).unwrap_or(0.0),
+                        close: f32::from_str(&latest.close).unwrap_or(0.0),
+                        volume: f32::from_str(&latest.volume).unwrap_or(0.0),
                     });
                 }
             }

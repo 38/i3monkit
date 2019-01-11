@@ -1,5 +1,11 @@
 # i3monkit - The i3 Status Bar Monitor Toolkit
 
+[![Latest Version](https://img.shields.io/crates/v/i3monkit.svg)](https://crates.io/crates/i3monkit)
+
+* [API Documentation](https://docs.serde.rs/i3monkit/)
+
+## Overview
+
 This is a toolkit for building customized status bar program for the [i3 tiling window manager](https://i3wm.org).
 i3 has its default status bar program called `i3status`, but it's somehow limited and hard to
 extend and customize. This crate gives you the ability to reimplement an status bar program for
@@ -9,6 +15,8 @@ i3 quickly.
 
 It comes with a set of builtin widget as well, such as, CPU usage bar, Network speed meter,
 etc.
+
+## How to build the status bar program
 
 You can crate your own status bar with just a few lines of code in Rust.
 

@@ -80,7 +80,7 @@ Finally, you can change `~/.config/i3/config` to make i3wm uses your status bar 
 
 You can also add your customized widget to the framework by implementing the `Widget` trait.
 
-```
+```rust
 use i3monkit::{Block, Widget, WidgetUpdate};
 struct Greeter(&'static str);
 impl Widget for Greeter {

@@ -7,6 +7,8 @@
 //! extend and customize. This crate gives you the ability to reimplement an status bar program for
 //! i3 quickly.
 //!
+//! ![Screenshort](https://raw.githubusercontent.com/38/i3monkit/master/screenshot.png)
+//!
 //! It comes with a set of builtin widget as well, such as, CPU usage bar, Network speed meter,
 //! etc.
 //!

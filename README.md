@@ -2,7 +2,7 @@
 
 [![Latest Version](https://img.shields.io/crates/v/i3monkit.svg)](https://crates.io/crates/i3monkit)
 
-* [API Documentation](https://docs.serde.rs/i3monkit/)
+* [API Documentation](https://docs.rs/i3monkit/)
 
 ## Overview
 

@@ -129,6 +129,8 @@ impl <'a> StockClient<'a> {
 
             let (sx, rx) = std::sync::mpsc::channel();
 
+            let mut min_sleep_duration = Duration::new(0, 10_000_000);
+
             let thread_handle = std::thread::spawn(move || {
                 loop {
                     let mut data = HashMap::<String,StockPrice>::new();
@@ -137,7 +139,8 @@ impl <'a> StockClient<'a> {
                         if *next_update >  SystemTime::now() { continue; }
                         if let Some(price) = Self::query_latest(symbol, &api_key) {
                             data.insert(symbol.to_string(), price);
-                            *next_update = SystemTime::now() + Duration::new(60,0); 
+                            *next_update = SystemTime::now() + Duration::new(300,0); 
+                            min_sleep_duration = Duration::new(0,10_000_000);
                         }
                     }
 
@@ -147,6 +150,11 @@ impl <'a> StockClient<'a> {
 
                     if let Ok(period) = next_wakeup.1.duration_since(SystemTime::now()) {
                         std::thread::sleep(period);
+                    } else {
+                        std::thread::sleep(min_sleep_duration);
+                        if min_sleep_duration < Duration::new(60, 0) {
+                            min_sleep_duration *= 2;
+                        }
                     }
                 }
             });

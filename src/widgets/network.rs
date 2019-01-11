@@ -65,12 +65,16 @@ impl TransferStat {
     }
 }
 
-pub struct TransferRateWidget {
+/// A widget that shows the network speed realtimely
+pub struct NetworkSpeedWidget {
     interface: String,
     last_stat: TransferStat,
 }
 
-impl TransferRateWidget {
+impl NetworkSpeedWidget {
+    /// Create the widget, for given interface.
+    ///
+    /// **interface** The interface to monitor
     pub fn new(interface:&str) -> Self {
         let last_stat = TransferStat::read_stat(interface).unwrap();
         let interface = interface.to_string();
@@ -98,7 +102,7 @@ impl TransferRateWidget {
         return ret;
     }
 
-    pub fn get_human_readable_stat(&mut self) -> Result<(String, String)> {
+    fn get_human_readable_stat(&mut self) -> Result<(String, String)> {
         let cur_stat = TransferStat::read_stat(&self.interface)?;
 
         let rx_rate = cur_stat.rx_rate(&self.last_stat);
@@ -111,7 +115,7 @@ impl TransferRateWidget {
 }
 
 
-impl Widget for TransferRateWidget {
+impl Widget for NetworkSpeedWidget {
     fn update(&mut self) -> Option<WidgetUpdate> {
         if let Ok((rx, tx)) = self.get_human_readable_stat() {
             let mut data = Block::new();

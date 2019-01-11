@@ -6,6 +6,7 @@ use alsa::Result;
 
 use std::ffi::CString;
 
+/// The system volume widget
 pub struct VolumeWidget {
     device: CString,
     #[allow(dead_code)]
@@ -31,6 +32,7 @@ impl VolumeWidget {
         return Ok(None);
     }
 
+    /// Creates new widget for the given mixer and channel id
     pub fn new(device:&str, mixer:&str, idx:u32) -> Self {
         let device = CString::new(device).unwrap();
         let mixer = CString::new(mixer).unwrap();

@@ -4,6 +4,9 @@ use crate::protocol::{Block};
 use std::fs::File;
 use std::io::{BufRead, BufReader, Result};
 
+/// The CPU usage widget
+///
+/// This widget draws a CPU usage pertentage bar on your i3 status bar. 
 pub struct CpuWidget {
     id  : u32,
     user: u64,
@@ -33,6 +36,9 @@ impl CpuWidget {
         Err(std::io::Error::new(std::io::ErrorKind::Other, "No such CPU core"))
     }
 
+    /// Create a new CPU usage monitor widget for specified core
+    ///
+    /// **id** The core id
     pub fn new(id:u32) -> Self {
         let (user, nice, system, idel) = Self::read_status(id).unwrap();
         let ret = Self {
@@ -46,7 +52,7 @@ impl CpuWidget {
         return ret;
     }
 
-    pub fn draw_bar(&mut self) -> Option<String> {
+    fn draw_bar(&mut self) -> Option<String> {
         let mut ret = Vec::new();
         for _ in 0..self.width {
             ret.push("<span foreground=\"grey\">|</span>".to_string());

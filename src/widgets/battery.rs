@@ -101,14 +101,23 @@ impl BatteryState {
     }
 }
 
+/// The battery status widget.
+///
+/// This widget shows the battery status of a laptop, such as, the percentage battery level,
+/// current status (charing, discharing, full, etc), current discharging/charing rate, estimated
+/// reminaing time, etc...
 pub struct BatteryWidget(u32);
 
 impl BatteryWidget {
+    /// Create a new widget for specified battery
+    ///
+    /// **idx** The index for the battery, for most of the system with only 1 battery, it should be
+    /// 0
     pub fn new(idx:u32) -> Self { 
         Self(idx)
     }
 
-    pub fn render_batter_status(&self) -> (String, i32) {
+    fn render_batter_status(&self) -> (String, i32) {
         if let Some(info) = BatteryState::get(self.0) {
             let mut ret = format!("{} {}%", info.stat.get_status_text(), info.percentage());
             if let Some((time,power)) = info.time_remaining() {

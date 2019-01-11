@@ -1,9 +1,11 @@
 use crate::widget::{Widget, WidgetUpdate};
 use crate::protocol::Block;
 
+/// The widget that shows local time
 pub struct DateTimeWidget(bool);
 
 impl DateTimeWidget {
+    /// Create a new time widget
     pub fn new() -> Self {
         DateTimeWidget(true)
     }

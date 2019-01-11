@@ -12,7 +12,24 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::{SystemTime, Duration};
 
-
+/// An simple Alpha Vantage client for realtime stock price
+///
+/// For details about the Alpha Vantage, see [their website](https://www.alphavantage.co/)
+///
+/// To use this client, you need an API key from Alpha Vantage. 
+/// For your own API key, Follow the instructions at
+/// [https://www.alphavantage.co/support/#api-key](https://www.alphavantage.co/support/#api-key)
+///
+/// With the key, you can create an instance of the client. And you can use the client to create
+/// stock widgets for specified stocks.
+///
+/// ```rust
+///     let client = StockClient::new("your-api-key");
+///
+///     let msft_price_widget = StockClient::create_widget("MSFT");
+///
+/// ```
+///
 pub struct StockClient<'a> {
     symbols : Vec<&'a str>,
     api_key : &'a str,
@@ -49,13 +66,13 @@ struct StockPrice {
     volume: f32,
 }
 
+/// The widget for realtime stock price
 pub struct StockWidget<'a>{
     symbol: &'a str, 
     client: Rc<RefCell<StockClient<'a>>>
 }
 
 impl <'a> Widget for StockWidget<'a> {
-    #[allow(dead_code)]
     fn update(&mut self) -> Option<WidgetUpdate> {
         self.client.borrow_mut().refresh();
         let mut block = Block::new();
@@ -83,13 +100,18 @@ impl <'a> Widget for StockWidget<'a> {
 }
 
 impl <'a> StockClient<'a> {
-    #[allow(dead_code)]
+
+    /// Creates a new Alpha Vantage client
     pub fn new(api_key: &'a str) -> Rc<RefCell<Self>> {
         let client = Self { symbols:Vec::new() , api_key , cache: HashMap::new(), refresh_thread: None, refresh_channel: None };
         return Rc::new(RefCell::new(client));
     }
 
-    #[allow(dead_code)]
+    /// Get a widget that shows the stock price for given symbol
+    ///
+    /// **this** The stock client
+    /// **symbol** The stock symbol to show
+    ///
     pub fn create_widget(this:&Rc<RefCell<Self>>, symbol:&'a str) -> StockWidget<'a> {
         this.borrow_mut().push(symbol);
         return StockWidget{ symbol, client: Rc::clone(this) };

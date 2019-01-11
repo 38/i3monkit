@@ -1,19 +1,31 @@
+
+//! The abstraction for [i3 bar protcol](https://i3wm.org/docs/i3bar-protocol.html)
+
 use std::io::{BufWriter, Write};
 use serde::{Serialize, Serializer};
 use serde_derive::Serialize;
 
+
+/// The I3 protocol header
 #[derive(Serialize, Default)]
 pub struct Header {
+    /// Version number, currently must be 1
     version: u32,
+    /// Sepecify the signal for stopping the program
     #[serde(skip_serializing_if = "Option::is_none")]
     stop_signal: Option<u32>,
+    /// Specify the signal for resume the program
     #[serde(skip_serializing_if = "Option::is_none")]
     cont_signal: Option<u32>,
+    /// If the mouse event is enabled
     #[serde(skip_serializing_if = "Option::is_none")]
     click_events: Option<bool>,
 }
 
 impl Header {
+    /// Create a new instance of protocol header
+    ///
+    /// **version** The version number of protocol, which should be 1
     pub fn new(version:u32) -> Self {
         let mut ret = Self::default();
         ret.version = version;
@@ -21,6 +33,7 @@ impl Header {
     }
 }
 
+/// An RGB color
 #[derive(Clone)]
 pub struct ColorRGB(pub u8,pub u8,pub u8);
 
@@ -36,12 +49,10 @@ impl ColorRGB {
         ColorRGB(255, 0, 0)
     }
 
-    #[allow(dead_code)]
     pub fn green() -> Self {
         ColorRGB(0, 255, 0)
     }
 
-    #[allow(dead_code)]
     pub fn blue() -> Self {
         ColorRGB(0, 0, 255)
     }
@@ -51,9 +62,12 @@ impl ColorRGB {
     }
 }
 
+/// The option indicate what markup language should the i3bar use to parse the output
 #[derive(Debug, Clone)]
 pub enum MarkupLang {
+    /// Use plain-text
     Text,
+    /// Use the Pango markup language
     Pango,
 }
 
@@ -66,17 +80,23 @@ impl Serialize for  MarkupLang {
     }
 }
 
+/// A block shown on the I3 status bar
 #[derive(Serialize, Clone)] 
 pub struct Block {
+    /// The full text shown on the bar
     full_text : String,
+    /// A short alternative for the message
     #[serde(skip_serializing_if = "String::is_empty")]
     short_text: String,
+    /// The text color
     #[serde(skip_serializing_if = "Option::is_none")]
     color     : Option<ColorRGB>,
+    /// The markup language options
     markup    : MarkupLang,
 }
 
 impl Block {
+    /// Create a new block 
     pub fn new() -> Self {
         Self {
             full_text: "".to_string(),
@@ -86,46 +106,51 @@ impl Block {
         }
     }
 
+    /// Set the full text of the block
     #[allow(dead_code)]
     pub fn full_text(&mut self, text:&str) -> &mut Self {
         self.full_text = text.to_string();
         self
     }
 
+    /// Append text to the full text
     pub fn append_full_text(&mut self, text:&str) -> &mut Self {
        self.full_text.push_str(text);
         self
     }
 
-    #[allow(dead_code)]
+    /// Set the short text
     pub fn short_text(&mut self, text:&str) -> &mut Self {
         self.short_text = text.to_string();
         self
     }
 
+    /// Set the foreground color
     pub fn color(&mut self, color:ColorRGB) -> &mut Self {
         self.color = Some(color);
         self
     }
 
-    #[allow(dead_code)]
+    /// Clear the color option and use default color
     pub fn clear_color(&mut self) -> &mut Self {
         self.color = None;
         self
     }
 
+    /// Make the block uses the pango markup language
     pub fn use_pango(&mut self) -> &mut Self {
         self.markup = MarkupLang::Pango;
         self
     }
 
-    #[allow(dead_code)]
+    /// Make the block uses plain text
     pub fn use_plain_text(&mut self) -> &mut Self {
         self.markup = MarkupLang::Text;
         self
     }
 }
 
+/// The abstraction for a i3 protocol instance
 pub struct I3Protocol<T:Write>(BufWriter<T>);
 
 impl <T:Write> I3Protocol<T> {
@@ -140,6 +165,9 @@ impl <T:Write> I3Protocol<T> {
         }
     }
 
+    /// Create a i3 protocol instance
+    ///
+    /// **wr** Where the protocol message should be dumped
     pub fn new(header:Header, wr:T) -> Self {
         let mut ret = I3Protocol(BufWriter::new(wr));
         ret.write_json(&header);
@@ -147,6 +175,9 @@ impl <T:Write> I3Protocol<T> {
         ret
     }
 
+    /// Refresh the bar 
+    ///
+    /// **status** The new list of blocks `i3bar` should redraw
     pub fn refresh(&mut self, status:&Vec<Block>) {
         self.write(",");
         self.write_json(status)

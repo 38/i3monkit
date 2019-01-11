@@ -1,3 +1,5 @@
+//! The widget infrastructure
+
 use std::time::{Duration, SystemTime};
 use std::thread::sleep;
 use std::collections::BinaryHeap;
@@ -5,22 +7,56 @@ use std::io::Write;
 use std::cmp::Ordering;
 use crate::protocol::{Block, I3Protocol};
 
+/// An update of a widget. 
+///
+/// This is used to return an widget update from the widget implementation
+/// to the widget framework
+///
+/// For some use cases, it's possible that we do not deliver any update, but 
+/// requires the widget framework to call the widget again after some time. 
+/// This can be done by passing the widget update with an empty data payload.
 pub struct WidgetUpdate {
+    /// Amount of time until the widget gets refresh
     pub refresh_interval : Duration,
+    /// Data payload to update, None indicates
     pub data             : Option<Block>,
 }
 
-#[allow(dead_code)]
+/// Widget decorator, which modifies the block returned by the widget
+///
+/// *i3monkit* allows uses to override any widget output by their own function with the dectorator.
+/// For example, changing the color of time display
+///
+/// ```rust
+///     use i3monkit::Decoratable;
+///     let widget = i3monkit::widget::DateTimeWidget::new().decorate_with(|b| {
+///         b.color(i3monkit::protcol::ColorRGB::red());
+///     })
+/// ```
+///
 pub struct WidgetDecorator<T:Widget, F: FnMut(&mut Block)> {
     inner : T,
     proc  : F
 }
 
+/// The trait for an widget.
+///
+/// A widget maintains a dynamic block on the i3bar
 pub trait Widget {
+    /// The function used to update the widget.
+    ///
+    /// Note: even with no update, the widget should return an non-empty update with empty data
+    /// payload. 
+    /// If None is returned, the framework will disable this widget and do not call the update
+    /// function anymore.
     fn update(&mut self) -> Option<WidgetUpdate>;
 }
 
+/// The trait for a decoratable object
 pub trait Decoratable : Widget + Sized {
+    /// Decorate the widget's block with a user-specified function
+    ///
+    /// **proc** The function we are going to use for block decoration
     fn decorate_with<F:FnMut(&mut Block)>(self, proc:F) -> WidgetDecorator<Self, F> {
         WidgetDecorator {
             inner:self ,
@@ -60,6 +96,21 @@ impl Ord for RefreshEvent {
     }
 }
 
+/// The collection of widgets
+///
+/// in **i3monkit** a status bar is abstracted as an widget collection.
+///
+/// To create a i3 bar application with i3monkit, what needs to be done is:
+///
+/// ```rust
+///     let bar = WidgetUpdate::new();
+///
+///     // Add whatever widget to the bar
+///     bar.push(...);
+///     ....
+///
+///     bar.update_loop();
+/// ```
 pub struct WidgetCollection {
     widgets: Vec<Box<dyn Widget>>,
     idx_map: Vec<usize>,
@@ -68,6 +119,7 @@ pub struct WidgetCollection {
 }
 
 impl WidgetCollection {
+    /// Creates a new widget collection
     pub fn new() -> WidgetCollection {
         WidgetCollection {
             widgets: Vec::new(),
@@ -77,11 +129,13 @@ impl WidgetCollection {
         }
     }
 
+    /// Push a new widget to the collection
     pub fn push<W:Widget + 'static>(&mut self, widget:W) -> &mut Self {
         self.widgets.push(Box::new(widget));
         self
     }
 
+    /// Start the main update loop and drawing the wigets on the i3bar
     pub fn update_loop<T:Write>(&mut self, mut proto_inst : I3Protocol<T>) {
         self.event_queue.clear();
 

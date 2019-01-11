@@ -75,6 +75,28 @@
 //!  	}                                                           
 //!   }
 //! ```
+//! ## Write your own widget
+//!
+//! You can also add your customized widget to the framework by implementing the `Widget` trait.
+//!
+//! ```
+//! use i3monkit::{Block, Widget, WidgetUpdate};
+//! struct Greeter(&'static str);
+//! impl Widget for Greeter {
+//!     fn update(&mut self) -> Option<WidgetUpdate> {
+//!         Some(WidgetUpdate{
+//!             refresh_interval: std::time::Duration::new(3600,0),
+//!             data: Some(Block::new().append_full_text(self.0).clone())
+//!         })
+//!     }
+//! }
+//!
+//! fn main() {
+//!     let bar = WidgetCollection::new();
+//!     bar.push(Greeter("hello world"));
+//!     .....
+//! }
+//! ```
 //!
 mod protocol;
 mod widget;

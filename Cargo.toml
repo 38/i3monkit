@@ -29,3 +29,7 @@ crate-type = ["bin"]
 [[examples]]
 name = "decorator"
 crate-type = ["bin"]
+
+[[examples]]
+name = "sample-bar2"
+crate-type = ["bin"]

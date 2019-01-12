@@ -21,3 +21,11 @@ curl = "^0.4"
 [[example]]
 name = "sample-i3-bar"
 crate-type = ["bin"]
+
+[[example]]
+name = "customized-widget"
+crate-type = ["bin"]
+
+[[examples]]
+name = "decorator"
+crate-type = ["bin"]

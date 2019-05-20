@@ -3,7 +3,6 @@
 
 use std::io::{BufWriter, Write};
 use serde::{Serialize, Serializer};
-use serde_derive::Serialize;
 
 
 /// The I3 protocol header

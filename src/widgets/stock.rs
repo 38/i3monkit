@@ -2,7 +2,7 @@ use crate::widget::{Widget, WidgetUpdate};
 use crate::protocol::Block;
 
 use curl::easy::Easy;
-use serde_derive::Deserialize;
+use serde::Deserialize;
 
 use std::collections::HashMap;
 use std::str::FromStr;

@@ -78,7 +78,7 @@ impl <'a> Widget for StockWidget<'a> {
         self.client.borrow_mut().refresh();
         let mut block = Block::new();
         block.use_pango();
-        block.append_full_text(&format!("<span foreground=\"#eaeaea\">{}</span>", self.symbol));
+        block.append_full_text(&format!("<span foreground=\"#eaeaea\">{} </span>", self.symbol));
         if let Some(latest) = self.client.borrow().cache.get(&self.symbol.to_string()) {
             let color = if latest.previous_close > latest.close {
                 "#ff0000"

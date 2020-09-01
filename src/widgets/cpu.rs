@@ -26,7 +26,7 @@ impl CpuWidget {
         let reader = BufReader::new(file);
         for line in reader.lines() {
             let line = line?;
-            let tokens:Vec<_> = line.trim().split(|c| c == ' ' || c == '\t').collect();
+            let tokens:Vec<_> = line.trim().split_whitespace().collect();
             if tokens[0] == name {
                 let parsed = tokens[1..5].iter().map(|x| u64::from_str_radix(x,10).unwrap()).collect::<Vec<_>>();
                 return Ok((parsed[0], parsed[1], parsed[2], parsed[3]));

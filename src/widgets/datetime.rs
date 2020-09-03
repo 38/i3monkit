@@ -1,5 +1,5 @@
-use crate::widget::{Widget, WidgetUpdate};
 use crate::protocol::Block;
+use crate::widget::{Widget, WidgetUpdate};
 
 /// The widget that shows local time
 pub struct DateTimeWidget(bool);
@@ -13,17 +13,17 @@ impl DateTimeWidget {
 
 impl Widget for DateTimeWidget {
     fn update(&mut self) -> Option<WidgetUpdate> {
-       let time_string = if self.0 {
-           format!("{}", chrono::Local::now().format("%H:%M"))
-       } else {
-           format!("{}", chrono::Local::now().format("%H %M"))
-       };
+        let time_string = if self.0 {
+            format!("{}", chrono::Local::now().format("%H:%M"))
+        } else {
+            format!("{}", chrono::Local::now().format("%H %M"))
+        };
 
-       self.0 = !self.0;
+        self.0 = !self.0;
 
-       Some(WidgetUpdate {
-           refresh_interval: std::time::Duration::new(1, 0),
-           data: Some(Block::new().append_full_text(&time_string).clone())
-       })
+        Some(WidgetUpdate {
+            refresh_interval: std::time::Duration::new(1, 0),
+            data: Some(Block::new().append_full_text(&time_string).clone()),
+        })
     }
 }

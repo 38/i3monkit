@@ -1,5 +1,5 @@
-use i3monkit::{I3Protocol, Header, WidgetCollection};
 use i3monkit::widgets::*;
+use i3monkit::{Header, I3Protocol, WidgetCollection};
 
 fn main() {
     let p = I3Protocol::new(Header::new(1), std::io::stdout());
@@ -20,7 +20,7 @@ fn main() {
     for i in 0..4 {
         bar.push(CpuWidget::new(i));
     }
-    
+
     bar.push(VolumeWidget::new("default", "Master", 0));
     bar.push(BatteryWidget::new(0));
     bar.push(DateTimeWidget::new());

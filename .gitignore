@@ -11,3 +11,5 @@ Cargo.lock
 
 # Vim files
 .*.sw*
+
+.vscode

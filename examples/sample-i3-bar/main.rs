@@ -1,5 +1,5 @@
-use i3monkit::*;
 use i3monkit::widgets::*;
+use i3monkit::*;
 
 fn main() {
     let mut bar = WidgetCollection::new();
@@ -30,4 +30,3 @@ fn main() {
     // Then start updating the satus bar
     bar.update_loop(I3Protocol::new(Header::new(1), std::io::stdout()));
 }
-                                                                             

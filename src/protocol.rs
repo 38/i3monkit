@@ -28,6 +28,11 @@ impl Header {
         ret.version = version;
         return ret;
     }
+
+    pub fn click_events(mut self, enable: bool) -> Self {
+        self.click_events = Some(enable);
+        self
+    }
 }
 
 /// An RGB color
@@ -80,6 +85,8 @@ impl Serialize for MarkupLang {
 /// A block shown on the I3 status bar
 #[derive(Serialize, Clone)]
 pub struct Block {
+    name : String,
+    instance : String,
     /// The full text shown on the bar
     full_text: String,
     /// A short alternative for the message
@@ -96,11 +103,23 @@ impl Block {
     /// Create a new block
     pub fn new() -> Self {
         Self {
+            name : "".to_string(),
+            instance : "".to_string(),
             full_text: "".to_string(),
             short_text: "".to_string(),
             color: None,
             markup: MarkupLang::Text,
         }
+    }
+
+    pub fn instance(&mut self, text: &str) -> &mut Self {
+        self.instance = text.to_string();
+        self
+    }
+
+    pub fn name(&mut self, text: &str) -> &mut Self {
+        self.name = text.to_string();
+        self
     }
 
     /// Set the full text of the block

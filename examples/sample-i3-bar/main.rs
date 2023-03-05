@@ -27,7 +27,7 @@ fn main() {
     //Time
     bar.push(DateTimeWidget::new());
 
-    // Then start updating the satus bar
+    // Then start updating the status bar
     bar.update_loop(I3Protocol::new(Header::new(1), std::io::stdout()));
 }
                                                                              

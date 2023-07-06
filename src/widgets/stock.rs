@@ -53,7 +53,7 @@ struct RawStockPrice {
 
 #[derive(Deserialize)]
 struct Response {
-    #[serde(rename = "Time Series (Daily)")]
+    #[serde(rename = "Time Series (1min)")]
     time_series: HashMap<String, RawStockPrice>,
 }
 
@@ -199,7 +199,7 @@ impl<'a> StockClient<'a> {
     }
 
     fn query_latest(symbol: &str, key: &str) -> Option<StockPrice> {
-        let url = format!("https://{server}/query?function=TIME_SERIES_DAILY&symbol={symbol}&interval=5min&outputsize=compact&apikey={key}",
+        let url = format!("https://{server}/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=1min&outputsize=compact&apikey={key}",
                           server = "www.alphavantage.co", symbol = symbol, key = key);
 
         let mut body = Vec::new();

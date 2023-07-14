@@ -47,13 +47,13 @@ struct RawStockPrice {
     low: String,
     #[serde(rename = "4. close")]
     close: String,
-    #[serde(rename = "5. volume")]
+    #[serde(rename = "6. volume")]
     volume: String,
 }
 
 #[derive(Deserialize)]
 struct Response {
-    #[serde(rename = "Time Series (1min)")]
+    #[serde(rename = "Time Series (Daily)")]
     time_series: HashMap<String, RawStockPrice>,
 }
 
@@ -102,8 +102,10 @@ impl<'a> Widget for StockWidget<'a> {
             block.append_full_text("<span foreground=\"#777777\">waiting</span>");
         }
 
+        /// Alpha Vantage standard API call frequency is 5 calls per minute and 500 calls per
+        /// day.
         return Some(WidgetUpdate {
-            refresh_interval: std::time::Duration::new(1, 0),
+            refresh_interval: std::time::Duration::new(60, 0),
             data: Some(block),
         });
     }
@@ -199,7 +201,7 @@ impl<'a> StockClient<'a> {
     }
 
     fn query_latest(symbol: &str, key: &str) -> Option<StockPrice> {
-        let url = format!("https://{server}/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=1min&outputsize=compact&apikey={key}",
+        let url = format!("https://{server}/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&interval=5min&outputsize=compact&apikey={key}",
                           server = "www.alphavantage.co", symbol = symbol, key = key);
 
         let mut body = Vec::new();

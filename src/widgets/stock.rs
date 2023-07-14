@@ -102,10 +102,8 @@ impl<'a> Widget for StockWidget<'a> {
             block.append_full_text("<span foreground=\"#777777\">waiting</span>");
         }
 
-        /// Alpha Vantage standard API call frequency is 5 calls per minute and 500 calls per
-        /// day.
         return Some(WidgetUpdate {
-            refresh_interval: std::time::Duration::new(60, 0),
+            refresh_interval: std::time::Duration::new(1, 0),
             data: Some(block),
         });
     }

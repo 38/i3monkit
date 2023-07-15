@@ -27,10 +27,10 @@
 //! ```rust
 //! use i3monkit::*;                                                              
 //! use i3monkit::widgets::*;                                                     
-//! 
+//!
 //! fn main() {
 //!     let mut bar = WidgetCollection::new();
-//! 
+//!
 //!     //Add realtime stock prices, for example: Microsoft, AMD and Facebook
 //!     let stock_client = StockClient::new("your-alphavantage-API-key");         
 //!     bar.push(StockClient::create_widget(&stock_client, "MSFT"));              
@@ -105,5 +105,5 @@ mod protocol;
 mod widget;
 pub mod widgets;
 
-pub use crate::protocol::{Header, I3Protocol, Block, ColorRGB};
-pub use crate::widget::{Widget, WidgetUpdate, WidgetCollection, Decoratable};
+pub use crate::protocol::{Block, ColorRGB, Header, I3Protocol};
+pub use crate::widget::{Decoratable, Widget, WidgetCollection, WidgetUpdate};

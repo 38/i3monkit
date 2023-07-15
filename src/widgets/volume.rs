@@ -1,7 +1,7 @@
-use crate::widget::{Widget, WidgetUpdate};
 use crate::protocol::{Block, ColorRGB};
+use crate::widget::{Widget, WidgetUpdate};
 
-use alsa::mixer::{Mixer, Selem, SelemId, SelemChannelId};
+use alsa::mixer::{Mixer, Selem, SelemChannelId, SelemId};
 use alsa::Result;
 
 use std::ffi::CString;
@@ -10,7 +10,7 @@ use std::ffi::CString;
 pub struct VolumeWidget {
     device: CString,
     #[allow(dead_code)]
-    mixer : CString,
+    mixer: CString,
     selem_id: SelemId,
 }
 
@@ -22,7 +22,7 @@ impl VolumeWidget {
         handle.load()?;
 
         if let Some(selem) = handle.find_selem(&self.selem_id) {
-            let (min,max) = selem.get_playback_volume_range();
+            let (min, max) = selem.get_playback_volume_range();
             let vol = selem.get_playback_volume(SelemChannelId::FrontLeft)?;
             let mute = selem.get_playback_switch(SelemChannelId::FrontLeft)?;
             let vol = ((100 * (vol - min)) as f32 / (max - min) as f32).round() as u32;
@@ -33,7 +33,7 @@ impl VolumeWidget {
     }
 
     /// Creates new widget for the given mixer and channel id
-    pub fn new(device:&str, mixer:&str, idx:u32) -> Self {
+    pub fn new(device: &str, mixer: &str, idx: u32) -> Self {
         let device = CString::new(device).unwrap();
         let mixer = CString::new(mixer).unwrap();
 
@@ -41,24 +41,28 @@ impl VolumeWidget {
         selem_id.set_name(mixer.as_c_str());
         selem_id.set_index(idx);
 
-        Self { device, mixer, selem_id }
+        Self {
+            device,
+            mixer,
+            selem_id,
+        }
     }
 }
 
 impl Widget for VolumeWidget {
     fn update(&mut self) -> Option<WidgetUpdate> {
         if let Ok(Some((mute, vol))) = self.get_volume() {
-            let icon = if !mute { "🔊" } else {"🔇"};
+            let icon = if !mute { "🔊" } else { "🔇" };
             let status = format!("{}%{}", vol, icon);
             let mut data = Block::new().append_full_text(&status).clone();
-            if mute { 
+            if mute {
                 data.color(ColorRGB::yellow());
-            } 
+            }
 
             return Some(WidgetUpdate {
-               refresh_interval: std::time::Duration::new(1, 0),
-               data:Some(data)
-            })
+                refresh_interval: std::time::Duration::new(1, 0),
+                data: Some(data),
+            });
         }
 
         None
